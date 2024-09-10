@@ -37,4 +37,6 @@ Spice.ai runtime starting...
 npm run dev
 ```
 
-Navigate to http://localhost:3000, and now you can chat with Vercel AI SDK docs
+Navigate to http://localhost:3000, and now you can chat with Vercel AI SDK docs:
+
+![CleanShot 2024-09-10 at 23 40 39@2x](https://github.com/user-attachments/assets/bbde759e-15c4-4667-b82c-1451c0b044a3)
