@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# Sample App
 
-## Getting Started
+1. Install Spice runtime. [Learn more](https://docs.spiceai.org).
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```shell
+curl https://install.spiceai.org | /bin/bash
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Copy `.env.example` → `.env`, and set your OpenAI API key and GitHub PAT for data connector
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Start Spice runtime
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+```console
+spice run
+Checking for latest Spice runtime release...
+Spice.ai runtime starting...
+2024-09-10T14:17:37.598982Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
+2024-09-10T14:17:37.599070Z  INFO runtime::metrics_server: Spice Runtime Metrics listening on 127.0.0.1:9090
+2024-09-10T14:17:37.599263Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
+2024-09-10T14:17:37.600010Z  INFO runtime::opentelemetry: Spice Runtime OpenTelemetry listening on 127.0.0.1:50052
+2024-09-10T14:17:38.175204Z  INFO runtime: Embedding [openai_embeddings] ready to embed
+2024-09-10T14:17:38.175396Z  INFO runtime: Tool [document_similarity] ready to use
+2024-09-10T14:17:38.175416Z  INFO runtime: Tool [table_schema] ready to use
+2024-09-10T14:17:38.175421Z  INFO runtime: Tool [sql] ready to use
+2024-09-10T14:17:38.175428Z  INFO runtime: Tool [list_datasets] ready to use
+2024-09-10T14:17:38.179149Z  INFO runtime: Initialized results cache; max size: 128.00 MiB, item ttl: 1s
+2024-09-10T14:17:38.179779Z  INFO runtime: Loading model [gpt-4o] from openai:gpt-4o...
+2024-09-10T14:17:38.686558Z  INFO runtime: Model [gpt-4o] deployed, ready for inferencing
+2024-09-10T14:17:39.174429Z  INFO runtime: Dataset vercel_ai_docs registered (github:github.com/vercel/ai/files/main), acceleration (arrow), results cache enabled.
+2024-09-10T14:17:39.175632Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset vercel_ai_docs
+2024-09-10T14:17:51.810106Z  INFO runtime::accelerated_table::refresh_task: Loaded 143 rows (2.29 MiB) for dataset vercel_ai_docs in 12s 634ms.
+```
 
-## Learn More
+4. Start the web app
 
-To learn more about Next.js, take a look at the following resources:
+```shell
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Navigate to http://localhost:3000, and now you can chat with Vercel AI SDK docs

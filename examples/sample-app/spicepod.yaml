@@ -1,0 +1,30 @@
+version: v1beta1
+kind: Spicepod
+name: spice-sample
+
+datasets:
+  - from: github:github.com/vercel/ai/files/main
+    name: vercel_ai_docs
+    description: |
+      This dataset contains docs from Vercel AI SDK repository.
+    params:
+      github_token: ${secrets:GITHUB_TOKEN}
+      include: "content/docs/**/*.mdx"
+    acceleration:
+      enabled: true
+    embeddings:
+    - column: content
+      use: openai_embeddings
+
+embeddings:
+  - from: openai
+    name: openai_embeddings
+    params:
+      openai_api_key: ${secrets:openai_api_key}
+
+models:
+  - name: gpt-4o
+    from: openai:gpt-4o
+    params:
+      spice_tools: auto
+      openai_api_key: ${secrets:openai_api_key}
