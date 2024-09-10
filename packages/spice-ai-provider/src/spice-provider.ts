@@ -17,6 +17,9 @@ import {
   type FetchFunction,
 } from "@ai-sdk/provider-utils";
 
+const SPICE_LOCAL_BASE_URL = "http://localhost:8090/v1";
+const SPICE_CLOUD_BASE_URL = "https://data.spiceai.io/v1";
+
 export interface SpiceProvider extends ProviderV1 {
   languageModel(
     modelId: string,
@@ -46,27 +49,30 @@ export interface SpiceProviderSettings {
 export function createSpice(
   options: SpiceProviderSettings = {}
 ): SpiceProvider {
-  const baseURL = withoutTrailingSlash(
-    options.baseURL ?? "https://data.spiceai.io/v1"
-  );
+  const baseURL = withoutTrailingSlash(options.baseURL ?? SPICE_LOCAL_BASE_URL);
 
-  const getHeaders = () => ({
-    Authorization: `Bearer ${loadApiKey({
-      apiKey: options.apiKey,
-      environmentVariableName: "SPICE_API_KEY",
-      description: "Spice AI",
-    })}`,
-    ...options.headers,
-  });
+  const isCloud = baseURL?.startsWith(SPICE_CLOUD_BASE_URL);
 
-  const url = ({ path }: { path: string }) => `${baseURL}/${path}`;
+  // api_key required only for spice cloud provider
+  const getHeaders = isCloud
+    ? () => ({
+        "X-API-KEY": loadApiKey({
+          apiKey: options.apiKey,
+          environmentVariableName: "SPICE_API_KEY",
+          description: "Spice AI",
+        }),
+        ...options.headers,
+      })
+    : () => ({ ...options.headers });
+
+  const url = ({ path }: { path: string }) => `${baseURL}${path}`;
 
   const createChatModel = (
     modelId: string,
     settings: OpenAIChatSettings = {}
   ) =>
     new OpenAIChatLanguageModel(modelId, settings, {
-      provider: "spice-ai.chat",
+      provider: "spiceai.chat",
       url,
       headers: getHeaders,
       compatibility: "compatible",
@@ -78,7 +84,7 @@ export function createSpice(
     settings: OpenAICompletionSettings = {}
   ) =>
     new OpenAICompletionLanguageModel(modelId, settings, {
-      provider: "spice-ai.completion",
+      provider: "spiceai.completion",
       url,
       compatibility: "compatible",
       headers: getHeaders,
@@ -90,7 +96,7 @@ export function createSpice(
     settings: OpenAIEmbeddingSettings = {}
   ) =>
     new OpenAIEmbeddingModel(modelId, settings, {
-      provider: "spice-ai.embeddings",
+      provider: "spiceai.embeddings",
       headers: getHeaders,
       url,
       fetch: options.fetch,
@@ -116,6 +122,13 @@ export function createSpice(
   provider.textEmbeddingModel = createEmbeddingModel;
 
   return provider as SpiceProvider;
+}
+
+export function createSpiceCloud(options: SpiceProviderSettings = {}) {
+  return createSpice({
+    baseURL: options.baseURL ?? SPICE_CLOUD_BASE_URL,
+    ...options,
+  });
 }
 
 export const spice = createSpice();

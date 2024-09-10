@@ -1,2 +1,2 @@
-export { spice, createSpice } from "./spice-provider";
+export { spice, createSpice, createSpiceCloud } from "./spice-provider";
 export type { SpiceProvider, SpiceProviderSettings } from "./spice-provider";
