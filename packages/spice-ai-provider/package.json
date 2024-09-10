@@ -1,0 +1,45 @@
+{
+  "name": "@spiceai/spice-ai-provider",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "tsup": "^8.2.4",
+    "typescript": "latest",
+    "zod": "^3.23.8"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^0.0.58",
+    "@ai-sdk/provider": "^0.0.23",
+    "@ai-sdk/provider-utils": "^1.0.18"
+  },
+  "peerDependencies": {
+    "zod": "^3.0.0"
+  },
+  "homepage": "https://spiceai.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spiceai/spice-ai-provider.git"
+  },
+  "bugs": {
+    "url": "https://github.com/spiceai/spice-ai-provider/issues"
+  },
+  "keywords": [
+    "ai",
+    "spiceai"
+  ]
+}
