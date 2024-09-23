@@ -1,4 +1,5 @@
 {
+  "name": "spice-ai-provider",
   "private": true,
   "scripts": {
     "build": "turbo build",
