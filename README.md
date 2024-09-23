@@ -13,6 +13,7 @@ npm install @spiceai/spice-ai-provider
 ## Usage
 
 Check Spice.ai to learn how to install and get started with local runtime:
+
 - [Install and start spice runtime](https://docs.spiceai.org/getting-started)
 - [Configure OpenAI or compatible LLM models](https://docs.spiceai.org/components/models/openai)
 

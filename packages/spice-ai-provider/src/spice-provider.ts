@@ -23,19 +23,19 @@ const SPICE_CLOUD_BASE_URL = "https://data.spiceai.io/v1";
 export interface SpiceProvider extends ProviderV1 {
   languageModel(
     modelId: string,
-    settings?: OpenAIChatSettings
+    settings?: OpenAIChatSettings,
   ): LanguageModelV1;
 
   chat(modelId: string, settings?: OpenAIChatSettings): LanguageModelV1;
 
   completion(
     modelId: string,
-    settings?: OpenAICompletionSettings
+    settings?: OpenAICompletionSettings,
   ): LanguageModelV1;
 
   textEmbeddingModel(
     modelId: string,
-    settings?: OpenAIEmbeddingSettings
+    settings?: OpenAIEmbeddingSettings,
   ): EmbeddingModelV1<string>;
 }
 
@@ -47,7 +47,7 @@ export interface SpiceProviderSettings {
 }
 
 export function createSpice(
-  options: SpiceProviderSettings = {}
+  options: SpiceProviderSettings = {},
 ): SpiceProvider {
   const baseURL = withoutTrailingSlash(options.baseURL ?? SPICE_LOCAL_BASE_URL);
 
@@ -69,7 +69,7 @@ export function createSpice(
 
   const createChatModel = (
     modelId: string,
-    settings: OpenAIChatSettings = {}
+    settings: OpenAIChatSettings = {},
   ) =>
     new OpenAIChatLanguageModel(modelId, settings, {
       provider: "spiceai.chat",
@@ -81,7 +81,7 @@ export function createSpice(
 
   const createCompletionModel = (
     modelId: string,
-    settings: OpenAICompletionSettings = {}
+    settings: OpenAICompletionSettings = {},
   ) =>
     new OpenAICompletionLanguageModel(modelId, settings, {
       provider: "spiceai.completion",
@@ -93,7 +93,7 @@ export function createSpice(
 
   const createEmbeddingModel = (
     modelId: string,
-    settings: OpenAIEmbeddingSettings = {}
+    settings: OpenAIEmbeddingSettings = {},
   ) =>
     new OpenAIEmbeddingModel(modelId, settings, {
       provider: "spiceai.embeddings",
@@ -104,11 +104,11 @@ export function createSpice(
 
   const provider = function (
     modelId: string,
-    settings?: OpenAIChatSettings | OpenAICompletionSettings
+    settings?: OpenAIChatSettings | OpenAICompletionSettings,
   ) {
     if (new.target) {
       throw new Error(
-        "The Spice model function cannot be called with the new keyword."
+        "The Spice model function cannot be called with the new keyword.",
       );
     }
 
