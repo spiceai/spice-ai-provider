@@ -1,1 +1,1 @@
-packages/spice-ai-provider/README.md
+./packages/spice-ai-provider/README.md
