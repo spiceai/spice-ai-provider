@@ -7,7 +7,7 @@
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "ci:version": "turbo run build lint && changeset version && npm install",
-    "ci:release": "changeset publish"
+    "ci:release": "turbo run build --filter=@spiceai/spice-ai-provider && changeset publish"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
