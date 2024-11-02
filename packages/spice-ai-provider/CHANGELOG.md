@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- Fixed spice.ai cloud support
+- Added support for all spice.ai api endpoints
 
 ## 0.0.2
 
