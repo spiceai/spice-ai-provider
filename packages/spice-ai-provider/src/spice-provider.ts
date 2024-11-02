@@ -51,7 +51,7 @@ export function createSpice(
 ): SpiceProvider {
   const baseURL = withoutTrailingSlash(options.baseURL ?? SPICE_LOCAL_BASE_URL);
 
-  const isSpiceCloud = baseURL?.includes("spiceai.io");
+  const isSpiceCloud = baseURL?.includes(".spiceai.io");
 
   // api_key required only for spice cloud provider
   const getHeaders = isSpiceCloud
