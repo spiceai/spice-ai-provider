@@ -51,10 +51,10 @@ export function createSpice(
 ): SpiceProvider {
   const baseURL = withoutTrailingSlash(options.baseURL ?? SPICE_LOCAL_BASE_URL);
 
-  const isCloud = baseURL?.startsWith(SPICE_CLOUD_BASE_URL);
+  const isSpiceCloud = baseURL?.includes(".spiceai.io");
 
   // api_key required only for spice cloud provider
-  const getHeaders = isCloud
+  const getHeaders = isSpiceCloud
     ? () => ({
         "X-API-KEY": loadApiKey({
           apiKey: options.apiKey,

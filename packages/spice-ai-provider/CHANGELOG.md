@@ -1,5 +1,11 @@
 # @spiceai/spice-ai-provider
 
+## 0.0.3
+
+### Patch Changes
+
+- Added support for all spice.ai api endpoints
+
 ## 0.0.2
 
 ### Patch Changes
