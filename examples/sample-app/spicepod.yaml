@@ -23,7 +23,7 @@ embeddings:
       openai_api_key: ${secrets:openai_api_key}
 
 models:
-  - name: gpt-4o
+  - name: openai
     from: openai:gpt-4o
     params:
       spice_tools: auto
