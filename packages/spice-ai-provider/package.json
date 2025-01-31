@@ -1,6 +1,6 @@
 {
   "name": "@spiceai/spice-ai-provider",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -29,9 +29,9 @@
     "zod": "^3.23.8"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^0.0.58",
-    "@ai-sdk/provider": "^0.0.23",
-    "@ai-sdk/provider-utils": "^1.0.18"
+    "@ai-sdk/openai": "^1.1.5",
+    "@ai-sdk/provider": "^1.0.6",
+    "@ai-sdk/provider-utils": "^2.1.5"
   },
   "peerDependencies": {
     "zod": "^3.0.0"

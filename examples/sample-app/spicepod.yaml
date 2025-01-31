@@ -1,4 +1,4 @@
-version: v1beta1
+version: v1
 kind: Spicepod
 name: spice-sample
 
@@ -23,8 +23,23 @@ embeddings:
       openai_api_key: ${secrets:openai_api_key}
 
 models:
-  - name: openai
-    from: openai:gpt-4o
+  - from: openai:gpt-4o
+    name: gpt-4o
     params:
+      openai_api_key: ${ secrets:OPENAI_API_KEY }
       spice_tools: auto
-      openai_api_key: ${secrets:openai_api_key}
+      
+  - from: openai:o1
+    name: o1
+    params:
+      openai_api_key: ${ secrets:OPENAI_API_KEY }
+      
+  - from: openai:o1-preview
+    name: o1-preview
+    params:
+      openai_api_key: ${ secrets:OPENAI_API_KEY }
+      
+  - from: openai:o1-mini
+    name: o1-mini
+    params:
+      openai_api_key: ${ secrets:OPENAI_API_KEY }
