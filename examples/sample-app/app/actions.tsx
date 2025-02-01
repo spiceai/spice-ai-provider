@@ -8,7 +8,7 @@ const spice = createSpice();
 
 export async function continueConversation(messages: CoreMessage[]) {
   const result = await streamText({
-    model: spice.chat("gpt-4o"),
+    model: spice.chat("o3-mini"),
     messages,
   });
 
