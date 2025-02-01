@@ -24,6 +24,6 @@
     "tools/*"
   ],
   "dependencies": {
-    "@changesets/cli": "^2.27.8"
+    "@changesets/cli": "^2.27.12"
   }
 }
