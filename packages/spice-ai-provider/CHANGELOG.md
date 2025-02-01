@@ -1,5 +1,11 @@
 # @spiceai/spice-ai-provider
 
+## 0.0.5
+
+### Patch Changes
+
+- 1867b9e: Update `@ai-sdk/openai` to fix o3-mini streaming
+
 ## 0.0.4
 
 ### Patch Changes
