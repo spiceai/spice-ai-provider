@@ -29,9 +29,9 @@
     "zod": "^3.23.8"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.1.5",
-    "@ai-sdk/provider": "^1.0.6",
-    "@ai-sdk/provider-utils": "^2.1.5"
+    "@ai-sdk/openai": "^1.1.9",
+    "@ai-sdk/provider": "^1.0.7",
+    "@ai-sdk/provider-utils": "^2.1.6"
   },
   "peerDependencies": {
     "zod": "^3.0.0"

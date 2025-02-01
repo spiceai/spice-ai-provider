@@ -27,7 +27,7 @@ models:
     name: gpt-4o
     params:
       openai_api_key: ${ secrets:OPENAI_API_KEY }
-      spice_tools: auto
+      tools: auto
       
   - from: openai:o1
     name: o1
@@ -43,3 +43,9 @@ models:
     name: o1-mini
     params:
       openai_api_key: ${ secrets:OPENAI_API_KEY }
+
+  - from: openai:o3-mini
+    name: o3-mini
+    params:
+      openai_api_key: ${ secrets:OPENAI_API_KEY }
+      tools: auto
