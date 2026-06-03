@@ -13,6 +13,21 @@ import type {
 const SPICE_LOCAL_BASE_URL = "http://localhost:8090/v1";
 const SPICE_CLOUD_BASE_URL = "https://data.spiceai.io/v1";
 
+// Returns true only when the base URL's host is `spiceai.io` or a subdomain of
+// it. Parsing the URL and matching on the hostname (rather than a substring
+// `includes(".spiceai.io")`) prevents hosts like `evil.spiceai.io.attacker.com`
+// or `attacker.com/?x=.spiceai.io` from being treated as Spice Cloud and being
+// sent the API key.
+function isSpiceCloudUrl(url: string): boolean {
+  let hostname: string;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return false;
+  }
+  return hostname === "spiceai.io" || hostname.endsWith(".spiceai.io");
+}
+
 export interface SpiceProvider extends Omit<ProviderV2, "imageModel"> {
   (modelId: string): LanguageModelV2;
 
@@ -39,7 +54,7 @@ export function createSpice(
     withoutTrailingSlash(options.baseURL ?? SPICE_LOCAL_BASE_URL) ??
     SPICE_LOCAL_BASE_URL;
 
-  const isSpiceCloud = baseURL.includes(".spiceai.io");
+  const isSpiceCloud = isSpiceCloudUrl(baseURL);
 
   // The API key is required only for the Spice Cloud endpoint, and Spice expects
   // it in the `X-API-KEY` header rather than the OpenAI-style `Authorization:
