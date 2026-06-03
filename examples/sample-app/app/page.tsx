@@ -1,18 +1,18 @@
 "use client";
 
-import { type CoreMessage } from "ai";
+import { type ModelMessage } from "ai";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGFM from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import remarkBreaks from "remark-breaks";
 import { continueConversation } from "./actions";
-import { readStreamableValue } from "ai/rsc";
+import { readStreamableValue } from "@ai-sdk/rsc";
 
 export const maxDuration = 30;
 
 export default function Chat() {
-  const [messages, setMessages] = useState<CoreMessage[]>([]);
+  const [messages, setMessages] = useState<ModelMessage[]>([]);
   const [input, setInput] = useState("");
   return (
     <div className="flex flex-col gap-8 w-full max-w-4xl py-24 px-8 mx-auto stretch">
@@ -32,7 +32,7 @@ export default function Chat() {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
-          const newMessages: CoreMessage[] = [
+          const newMessages: ModelMessage[] = [
             ...messages,
             { content: input, role: "user" },
           ];

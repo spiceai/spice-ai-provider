@@ -1,42 +1,28 @@
+import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import {
-  EmbeddingModelV1,
-  LanguageModelV1,
-  ProviderV1,
-} from "@ai-sdk/provider";
-import {
-  OpenAIChatLanguageModel,
-  OpenAIChatSettings,
-  OpenAICompletionLanguageModel,
-  OpenAICompletionSettings,
-  OpenAIEmbeddingModel,
-  OpenAIEmbeddingSettings,
-} from "@ai-sdk/openai/internal";
-import {
-  withoutTrailingSlash,
   loadApiKey,
+  withoutTrailingSlash,
   type FetchFunction,
 } from "@ai-sdk/provider-utils";
+import type {
+  EmbeddingModelV2,
+  LanguageModelV2,
+  ProviderV2,
+} from "@ai-sdk/provider";
 
 const SPICE_LOCAL_BASE_URL = "http://localhost:8090/v1";
 const SPICE_CLOUD_BASE_URL = "https://data.spiceai.io/v1";
 
-export interface SpiceProvider extends ProviderV1 {
-  languageModel(
-    modelId: string,
-    settings?: OpenAIChatSettings,
-  ): LanguageModelV1;
+export interface SpiceProvider extends Omit<ProviderV2, "imageModel"> {
+  (modelId: string): LanguageModelV2;
 
-  chat(modelId: string, settings?: OpenAIChatSettings): LanguageModelV1;
+  languageModel(modelId: string): LanguageModelV2;
 
-  completion(
-    modelId: string,
-    settings?: OpenAICompletionSettings,
-  ): LanguageModelV1;
+  chat(modelId: string): LanguageModelV2;
 
-  textEmbeddingModel(
-    modelId: string,
-    settings?: OpenAIEmbeddingSettings,
-  ): EmbeddingModelV1<string>;
+  completion(modelId: string): LanguageModelV2;
+
+  textEmbeddingModel(modelId: string): EmbeddingModelV2<string>;
 }
 
 export interface SpiceProviderSettings {
@@ -49,82 +35,61 @@ export interface SpiceProviderSettings {
 export function createSpice(
   options: SpiceProviderSettings = {},
 ): SpiceProvider {
-  const baseURL = withoutTrailingSlash(options.baseURL ?? SPICE_LOCAL_BASE_URL);
+  const baseURL =
+    withoutTrailingSlash(options.baseURL ?? SPICE_LOCAL_BASE_URL) ??
+    SPICE_LOCAL_BASE_URL;
 
-  const isSpiceCloud = baseURL?.includes(".spiceai.io");
+  const isSpiceCloud = baseURL.includes(".spiceai.io");
 
-  // api_key required only for spice cloud provider
-  const getHeaders = isSpiceCloud
-    ? () => ({
-        "X-API-KEY": loadApiKey({
-          apiKey: options.apiKey,
-          environmentVariableName: "SPICE_API_KEY",
-          description: "Spice AI",
-        }),
-        ...options.headers,
-      })
-    : () => ({ ...options.headers });
+  // The API key is required only for the Spice Cloud endpoint, and Spice expects
+  // it in the `X-API-KEY` header rather than the OpenAI-style `Authorization:
+  // Bearer` header — so it is supplied via `headers`, not the `apiKey` option.
+  const headers: Record<string, string> = {
+    ...(isSpiceCloud
+      ? {
+          "X-API-KEY": loadApiKey({
+            apiKey: options.apiKey,
+            environmentVariableName: "SPICE_API_KEY",
+            description: "Spice AI",
+          }),
+        }
+      : {}),
+    ...options.headers,
+  };
 
-  const url = ({ path }: { path: string }) => `${baseURL}${path}`;
+  const openaiCompatible = createOpenAICompatible({
+    name: "spiceai",
+    baseURL,
+    headers,
+    fetch: options.fetch,
+  });
 
-  const createChatModel = (
-    modelId: string,
-    settings: OpenAIChatSettings = {},
-  ) =>
-    new OpenAIChatLanguageModel(modelId, settings, {
-      provider: "spiceai.chat",
-      url,
-      headers: getHeaders,
-      compatibility: "compatible",
-      fetch: options.fetch,
-    });
+  const createChatModel = (modelId: string): LanguageModelV2 =>
+    openaiCompatible.chatModel(modelId);
 
-  const createCompletionModel = (
-    modelId: string,
-    settings: OpenAICompletionSettings = {},
-  ) =>
-    new OpenAICompletionLanguageModel(modelId, settings, {
-      provider: "spiceai.completion",
-      url,
-      compatibility: "compatible",
-      headers: getHeaders,
-      fetch: options.fetch,
-    });
-
-  const createEmbeddingModel = (
-    modelId: string,
-    settings: OpenAIEmbeddingSettings = {},
-  ) =>
-    new OpenAIEmbeddingModel(modelId, settings, {
-      provider: "spiceai.embeddings",
-      headers: getHeaders,
-      url,
-      fetch: options.fetch,
-    });
-
-  const provider = function (
-    modelId: string,
-    settings?: OpenAIChatSettings | OpenAICompletionSettings,
-  ) {
+  function provider(modelId: string): LanguageModelV2 {
     if (new.target) {
       throw new Error(
         "The Spice model function cannot be called with the new keyword.",
       );
     }
 
-    return createChatModel(modelId, settings as OpenAIChatSettings);
-  };
+    return createChatModel(modelId);
+  }
 
-  provider.languageModel = createChatModel;
-  provider.chat = createChatModel;
-  provider.completion = createCompletionModel;
-  provider.textEmbedding = createEmbeddingModel;
-  provider.textEmbeddingModel = createEmbeddingModel;
-
-  return provider as SpiceProvider;
+  return Object.assign(provider, {
+    languageModel: createChatModel,
+    chat: createChatModel,
+    completion: (modelId: string): LanguageModelV2 =>
+      openaiCompatible.completionModel(modelId),
+    textEmbeddingModel: (modelId: string): EmbeddingModelV2<string> =>
+      openaiCompatible.textEmbeddingModel(modelId),
+  }) as SpiceProvider;
 }
 
-export function createSpiceCloud(options: SpiceProviderSettings = {}) {
+export function createSpiceCloud(
+  options: SpiceProviderSettings = {},
+): SpiceProvider {
   return createSpice({
     baseURL: options.baseURL ?? SPICE_CLOUD_BASE_URL,
     ...options,
