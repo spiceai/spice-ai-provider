@@ -5,9 +5,9 @@ import {
   type FetchFunction,
 } from "@ai-sdk/provider-utils";
 import type {
-  EmbeddingModelV2,
-  LanguageModelV2,
-  ProviderV2,
+  EmbeddingModelV4,
+  LanguageModelV4,
+  ProviderV4,
 } from "@ai-sdk/provider";
 
 const SPICE_LOCAL_BASE_URL = "http://localhost:8090/v1";
@@ -28,16 +28,19 @@ function isSpiceCloudUrl(url: string): boolean {
   return hostname === "spiceai.io" || hostname.endsWith(".spiceai.io");
 }
 
-export interface SpiceProvider extends Omit<ProviderV2, "imageModel"> {
-  (modelId: string): LanguageModelV2;
+export interface SpiceProvider extends Omit<ProviderV4, "imageModel"> {
+  (modelId: string): LanguageModelV4;
 
-  languageModel(modelId: string): LanguageModelV2;
+  languageModel(modelId: string): LanguageModelV4;
 
-  chat(modelId: string): LanguageModelV2;
+  chat(modelId: string): LanguageModelV4;
 
-  completion(modelId: string): LanguageModelV2;
+  completion(modelId: string): LanguageModelV4;
 
-  textEmbeddingModel(modelId: string): EmbeddingModelV2<string>;
+  embeddingModel(modelId: string): EmbeddingModelV4;
+
+  /** Alias for {@link SpiceProvider.embeddingModel}. */
+  textEmbeddingModel(modelId: string): EmbeddingModelV4;
 }
 
 export interface SpiceProviderSettings {
@@ -79,10 +82,13 @@ export function createSpice(
     fetch: options.fetch,
   });
 
-  const createChatModel = (modelId: string): LanguageModelV2 =>
+  const createChatModel = (modelId: string): LanguageModelV4 =>
     openaiCompatible.chatModel(modelId);
 
-  function provider(modelId: string): LanguageModelV2 {
+  const createEmbeddingModel = (modelId: string): EmbeddingModelV4 =>
+    openaiCompatible.textEmbeddingModel(modelId);
+
+  function provider(modelId: string): LanguageModelV4 {
     if (new.target) {
       throw new Error(
         "The Spice model function cannot be called with the new keyword.",
@@ -93,12 +99,13 @@ export function createSpice(
   }
 
   return Object.assign(provider, {
+    specificationVersion: "v4",
     languageModel: createChatModel,
     chat: createChatModel,
-    completion: (modelId: string): LanguageModelV2 =>
+    completion: (modelId: string): LanguageModelV4 =>
       openaiCompatible.completionModel(modelId),
-    textEmbeddingModel: (modelId: string): EmbeddingModelV2<string> =>
-      openaiCompatible.textEmbeddingModel(modelId),
+    embeddingModel: createEmbeddingModel,
+    textEmbeddingModel: createEmbeddingModel,
   }) as SpiceProvider;
 }
 
