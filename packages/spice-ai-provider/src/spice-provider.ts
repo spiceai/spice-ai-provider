@@ -44,7 +44,12 @@ export interface SpiceProvider extends Omit<ProviderV4, "imageModel"> {
 }
 
 export interface SpiceProviderSettings {
+  /** Runtime base URL. Defaults to `http://localhost:8090/v1`. */
   baseURL?: string;
+  /**
+   * API key, sent as the `X-API-KEY` header to the runtime at `baseURL`.
+   * For Spice Cloud it defaults to the `SPICE_API_KEY` environment variable.
+   */
   apiKey?: string;
   headers?: Record<string, string>;
   fetch?: FetchFunction;
@@ -59,19 +64,26 @@ export function createSpice(
 
   const isSpiceCloud = isSpiceCloudUrl(baseURL);
 
-  // The API key is required only for the Spice Cloud endpoint, and Spice expects
-  // it in the `X-API-KEY` header rather than the OpenAI-style `Authorization:
-  // Bearer` header — so it is supplied via `headers`, not the `apiKey` option.
+  // Spice expects the API key in the `X-API-KEY` header rather than the
+  // OpenAI-style `Authorization: Bearer` header, so it is supplied via
+  // `headers`, not the `apiKey` option of `createOpenAICompatible`.
+  //
+  // An explicit `apiKey` is sent to whatever runtime `baseURL` names: a
+  // self-hosted runtime with API-key auth enabled rejects requests without it.
+  // The `SPICE_API_KEY` environment variable is read only for Spice Cloud,
+  // where a key is required, so an ambient key is never sent to another host.
+  const apiKey =
+    options.apiKey ??
+    (isSpiceCloud
+      ? loadApiKey({
+          apiKey: undefined,
+          environmentVariableName: "SPICE_API_KEY",
+          description: "Spice AI",
+        })
+      : undefined);
+
   const headers: Record<string, string> = {
-    ...(isSpiceCloud
-      ? {
-          "X-API-KEY": loadApiKey({
-            apiKey: options.apiKey,
-            environmentVariableName: "SPICE_API_KEY",
-            description: "Spice AI",
-          }),
-        }
-      : {}),
+    ...(apiKey !== undefined ? { "X-API-KEY": apiKey } : {}),
     ...options.headers,
   };
 
@@ -112,9 +124,11 @@ export function createSpice(
 export function createSpiceCloud(
   options: SpiceProviderSettings = {},
 ): SpiceProvider {
+  // Spread first so an explicit `baseURL: undefined` still means Spice Cloud
+  // rather than overriding the default and falling back to localhost.
   return createSpice({
-    baseURL: options.baseURL ?? SPICE_CLOUD_BASE_URL,
     ...options,
+    baseURL: options.baseURL ?? SPICE_CLOUD_BASE_URL,
   });
 }
 

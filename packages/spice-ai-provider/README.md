@@ -25,7 +25,7 @@ You can import default spice provider instance `spice` from `@spiceai/spice-ai-p
 import { spice } from "@spiceai/spice-ai-provider";
 ```
 
-If you need a cusom setup, use `createSpice` and create provider with your settings:
+If you need a custom setup, use `createSpice` and create provider with your settings:
 
 ```ts
 import { createSpice } from "@spiceai/spice-ai-provider";
@@ -38,6 +38,34 @@ const spice = createSpice({
 Provider settings:
 
 - **baseURL** - optional, defaults to `http://localhost:8090/v1`
+- **apiKey** - optional, sent as the `X-API-KEY` header to the runtime at `baseURL`
+- **headers** - optional, extra headers sent with every request
+- **fetch** - optional, a custom `fetch` implementation
+
+## Connect to a runtime with API key auth
+
+When the runtime has [API key authentication](https://spiceai.org/docs/api/auth) enabled, pass the key:
+
+```ts
+import { createSpice } from "@spiceai/spice-ai-provider";
+
+const spice = createSpice({
+  baseURL: "https://spice.example.com/v1",
+  apiKey: process.env.MY_SPICE_RUNTIME_KEY,
+});
+```
+
+## Connect to Spice Cloud
+
+`createSpiceCloud` points the provider at `https://data.spiceai.io/v1`. The API key defaults to the `SPICE_API_KEY` environment variable:
+
+```ts
+import { createSpiceCloud } from "@spiceai/spice-ai-provider";
+
+const spice = createSpiceCloud({ apiKey: process.env.SPICE_API_KEY });
+```
+
+`SPICE_API_KEY` is read only for Spice Cloud, so an ambient key is never sent to another host; for any other runtime, pass `apiKey` explicitly.
 
 ## Example
 
