@@ -67,6 +67,22 @@ const spice = createSpiceCloud({ apiKey: process.env.SPICE_API_KEY });
 
 `SPICE_API_KEY` is read only for Spice Cloud, so an ambient key is never sent to another host; for any other runtime, pass `apiKey` explicitly.
 
+## Models
+
+```ts
+import { generateText } from "ai";
+import { spice } from "@spiceai/spice-ai-provider";
+
+const { text } = await generateText({
+  model: spice("gpt-4o"), // the model's `name` in your spicepod
+  prompt: "What is Spice?",
+});
+```
+
+- `spice(modelId)`, `spice.chat(modelId)`, and `spice.languageModel(modelId)` return a chat model served by the runtime's `/v1/chat/completions`.
+- `spice.embeddingModel(modelId)` (alias `textEmbeddingModel`) returns an embedding model served by `/v1/embeddings`.
+- `spice.completion(modelId)` is deprecated and returns the chat model: the runtime has no legacy `/v1/completions` route.
+
 ## Example
 
 Navigate to [`examples/sample-app`](https://github.com/spiceai/spice-ai-provider/tree/trunk/examples/sample-app)
