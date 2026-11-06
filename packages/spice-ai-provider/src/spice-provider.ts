@@ -35,6 +35,13 @@ export interface SpiceProvider extends Omit<ProviderV4, "imageModel"> {
 
   chat(modelId: string): LanguageModelV4;
 
+  /**
+   * Alias for {@link SpiceProvider.chat}. The Spice runtime serves no legacy
+   * `/v1/completions` route, so this returns the chat model rather than one that
+   * fails on every call.
+   *
+   * @deprecated Use {@link SpiceProvider.chat} or {@link SpiceProvider.languageModel}.
+   */
   completion(modelId: string): LanguageModelV4;
 
   embeddingModel(modelId: string): EmbeddingModelV4;
@@ -102,8 +109,7 @@ export function createSpice(
     specificationVersion: "v4",
     languageModel: createChatModel,
     chat: createChatModel,
-    completion: (modelId: string): LanguageModelV4 =>
-      openaiCompatible.completionModel(modelId),
+    completion: createChatModel,
     embeddingModel: createEmbeddingModel,
     textEmbeddingModel: createEmbeddingModel,
   }) as SpiceProvider;

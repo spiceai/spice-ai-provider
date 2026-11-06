@@ -39,6 +39,22 @@ Provider settings:
 
 - **baseURL** - optional, defaults to `http://localhost:8090/v1`
 
+## Models
+
+```ts
+import { generateText } from "ai";
+import { spice } from "@spiceai/spice-ai-provider";
+
+const { text } = await generateText({
+  model: spice("gpt-4o"), // the model's `name` in your spicepod
+  prompt: "What is Spice?",
+});
+```
+
+- `spice(modelId)`, `spice.chat(modelId)`, and `spice.languageModel(modelId)` return a chat model served by the runtime's `/v1/chat/completions`.
+- `spice.embeddingModel(modelId)` (alias `textEmbeddingModel`) returns an embedding model served by `/v1/embeddings`.
+- `spice.completion(modelId)` is deprecated and returns the chat model: the runtime has no legacy `/v1/completions` route.
+
 ## Example
 
 Navigate to [`examples/sample-app`](https://github.com/spiceai/spice-ai-provider/tree/trunk/examples/sample-app)
